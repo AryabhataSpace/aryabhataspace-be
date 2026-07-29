@@ -1,0 +1,32 @@
+export enum PostCategory {
+  TECHNOLOGY = 'Technology',
+  COURSES = 'Courses',
+  TRAINING = 'Training',
+  JOBS = 'Jobs',
+  CAREER = 'Career',
+  RESOURCES = 'Resources',
+  EXPERIMENTS = 'Experiments',
+  PROJECTS = 'Projects',
+  TEAM_BUILDING = 'Team building',
+  SKILLS = 'Skills',
+  LEADERSHIP = 'Leadership',
+  EXPERIENCE = 'Experience',
+  PLACEMENTS = 'Placements',
+  DEPUTATIONS = 'Deputations',
+  ABROAD_WORK = 'Abroad work',
+  REGISTRATIONS = 'Registrations',
+  CERTIFICATIONS = 'Certifications',
+  AFFILIATIONS = 'Affiliations',
+  INSTITUTIONS = 'Institutions',
+  WORKSHOPS = 'Workshops',
+  MACHINING = 'Machining',
+  DESIGN = 'Design',
+  PLANNING = 'Planning',
+  EXECUTION = 'Execution',
+  MATERIALS = 'Materials',
+  PROCUREMENT = 'Procurement',
+  QA_QC = 'QA QC',
+  TESTING = 'Testing'
+}
+
+export const POST_CATEGORIES = Object.values(PostCategory);
