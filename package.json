@@ -6,6 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "build:fe": "npm run build --prefix ../aryabhataspace-fe && node -e \"const fs = require('fs'); fs.rmSync('./client-dist', {force:true, recursive:true}); fs.cpSync('../aryabhataspace-fe/dist/aryabhataspace-fe', './client-dist', {recursive:true}); console.log('Frontend built and copied to client-dist successfully!');\"",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
