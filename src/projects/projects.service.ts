@@ -19,6 +19,7 @@ export interface Project {
   responsibilities?: string[];
   expectedOutcomes?: string[];
   featured?: boolean;
+  involvedPeopleCount?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -45,6 +46,7 @@ export class ProjectsService {
       responsibilities: ['Implement attitude kinematics', 'Develop HIL simulation interfaces'],
       expectedOutcomes: ['Tested ADCS firmware module'],
       featured: true,
+      involvedPeopleCount: 12,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     },
@@ -67,6 +69,7 @@ export class ProjectsService {
       responsibilities: ['Model 3D fluid-structure interaction', 'Analyze thermal strain'],
       expectedOutcomes: ['Thermal analysis report'],
       featured: true,
+      involvedPeopleCount: 8,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     },
@@ -89,6 +92,7 @@ export class ProjectsService {
       responsibilities: ['Train neural depth estimation', 'Integrate ROS2 Nav2'],
       expectedOutcomes: ['ROS2 hazard avoidance package'],
       featured: true,
+      involvedPeopleCount: 15,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     },
@@ -143,6 +147,7 @@ export class ProjectsService {
       responsibilities: dto.responsibilities || [],
       expectedOutcomes: dto.expectedOutcomes || [],
       featured: dto.featured ?? false,
+      involvedPeopleCount: dto.involvedPeopleCount || 0,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
