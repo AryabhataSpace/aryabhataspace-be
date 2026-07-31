@@ -15,16 +15,10 @@ async function bootstrap() {
   const feServerPath = join(__dirname, '../client-dist/server/server.mjs');
   const feServerUrl = pathToFileURL(feServerPath).href;
 
-  // Set ALLOWED_HOSTS for Angular SSR to prevent SSRF errors and fallback to CSR
-  let allowedHosts = 'localhost,127.0.0.1';
-  if (process.env.RAILWAY_PUBLIC_DOMAIN) {
-    allowedHosts += `,${process.env.RAILWAY_PUBLIC_DOMAIN}`;
-  }
-  
+  // Set NG_ALLOWED_HOSTS for Angular SSR to prevent SSRF errors and fallback to CSR
+  // We use '*' by default in this initial development phase to allow custom Railway domains
   if (!process.env['NG_ALLOWED_HOSTS']) {
-    process.env['NG_ALLOWED_HOSTS'] = allowedHosts;
-  } else if (process.env.RAILWAY_PUBLIC_DOMAIN) {
-    process.env['NG_ALLOWED_HOSTS'] += `,${process.env.RAILWAY_PUBLIC_DOMAIN}`;
+    process.env['NG_ALLOWED_HOSTS'] = '*';
   }
 
   let ssrLoadError: string | null = null;
