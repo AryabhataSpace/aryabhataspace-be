@@ -16,33 +16,45 @@ async function bootstrap() {
   const feServerUrl = pathToFileURL(feServerPath).href;
 
   // Set ALLOWED_HOSTS for Angular SSR to prevent SSRF errors and fallback to CSR
-  let allowedHosts = 'localhost,127.0.0.1,localhost:3000';
+  let allowedHosts = 'localhost,127.0.0.1';
   if (process.env.RAILWAY_PUBLIC_DOMAIN) {
     allowedHosts += `,${process.env.RAILWAY_PUBLIC_DOMAIN}`;
   }
   
-  if (!process.env['ALLOWED_HOSTS']) {
-    process.env['ALLOWED_HOSTS'] = allowedHosts;
+  if (!process.env['NG_ALLOWED_HOSTS']) {
+    process.env['NG_ALLOWED_HOSTS'] = allowedHosts;
   } else if (process.env.RAILWAY_PUBLIC_DOMAIN) {
-    process.env['ALLOWED_HOSTS'] += `,${process.env.RAILWAY_PUBLIC_DOMAIN}`;
+    process.env['NG_ALLOWED_HOSTS'] += `,${process.env.RAILWAY_PUBLIC_DOMAIN}`;
   }
+
+  let ssrLoadError: string | null = null;
+  let angularServerModule: any = null;
 
   try {
     const nativeImport = new Function('modulePath', 'return import(modulePath)');
-    const angularServerModule = await nativeImport(feServerUrl);
-    
-    if (angularServerModule.reqHandler) {
-      expressApp.use('/', (req: any, res: any, next: any) => {
-        if (req.url.startsWith('/api')) {
-          return next();
-        }
-        angularServerModule.reqHandler(req, res, next);
-      });
-      logger.log(`Angular SSR engine loaded and mounted from ${feServerPath}`);
-    }
+    angularServerModule = await nativeImport(feServerUrl);
   } catch (err) {
-    logger.warn(`Angular SSR module not found at ${feServerPath}. Ensure the frontend is built and copied. Error: ${(err as Error).message}`);
+    ssrLoadError = (err as Error).message;
+    logger.warn(`Angular SSR module not found at ${feServerPath}. Ensure the frontend is built and copied. Error: ${ssrLoadError}`);
   }
+
+  expressApp.use('/', (req: any, res: any, next: any) => {
+    if (req.url.startsWith('/api')) {
+      return next();
+    }
+    
+    if (angularServerModule && angularServerModule.reqHandler) {
+      angularServerModule.reqHandler(req, res, next);
+    } else {
+      res.status(500).send(`
+        <h1>Backend API is running.</h1>
+        <p>However, the Angular SSR module failed to load or was not found.</p>
+        <p><strong>Path checked:</strong> ${feServerPath}</p>
+        <p><strong>Error:</strong> ${ssrLoadError || 'reqHandler not exported'}</p>
+        <p>Please ensure you have built the frontend and committed the <code>client-dist</code> directory to this repository.</p>
+      `);
+    }
+  });
 
   await app.listen(process.env.PORT ?? 3000);
 }
