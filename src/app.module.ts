@@ -20,7 +20,10 @@ import { AuditLogsModule } from './audit-logs/audit-logs.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
-        const databaseUrl = config.get<string>('DATABASE_URL');
+        const databaseUrl = config.get<string>(
+          'DATABASE_URL',
+          'postgresql://postgres:postgres@localhost:5432/aryabhataspace_db',
+        );
         const dbSsl = config.get<string>('DB_SSL');
         const useSsl =
           dbSsl === 'true' ||
@@ -28,15 +31,7 @@ import { AuditLogsModule } from './audit-logs/audit-logs.module';
 
         return {
           type: 'postgres',
-          ...(databaseUrl
-            ? { url: databaseUrl }
-            : {
-                host: config.get<string>('DB_HOST', 'localhost'),
-                port: parseInt(config.get<string>('DB_PORT', '5432'), 10),
-                username: config.get<string>('DB_USERNAME', 'postgres'),
-                password: config.get<string>('DB_PASSWORD', 'postgres'),
-                database: config.get<string>('DB_DATABASE', 'aryabhataspace'),
-              }),
+          url: databaseUrl,
           ssl: useSsl ? { rejectUnauthorized: false } : false,
           autoLoadEntities: true,
           synchronize: config.get<string>('DB_SYNCHRONIZE', 'true') === 'true',
