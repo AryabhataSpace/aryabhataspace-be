@@ -16,6 +16,7 @@ async function bootstrap() {
   const logger = new Logger('Bootstrap');
 
   const expressApp = app.getHttpAdapter().getInstance();
+  expressApp.set('trust proxy', true);
 
   // Determine path to the Angular SSR bundle.
   // Whether we are in src/ or dist/, `..` brings us to `aryabhataspace-be`.
