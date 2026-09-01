@@ -4,6 +4,13 @@ import { join } from 'path';
 import { pathToFileURL } from 'url';
 import { Logger } from '@nestjs/common';
 
+// Load .env file if supported by Node runtime
+try {
+  process.loadEnvFile?.();
+} catch {
+  // Ignore if .env is missing or already loaded in container environments
+}
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const logger = new Logger('Bootstrap');

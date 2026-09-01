@@ -1,5 +1,6 @@
-import { Controller, Get, Put, Param, Query, Body } from '@nestjs/common';
+import { Controller, Get, Post, Put, Param, Query, Body } from '@nestjs/common';
 import { CandidatesService } from './candidates.service';
+import { RegisterCandidateDto } from './types/candidate.types';
 
 @Controller('api/v1/admin/membership-applications')
 export class AdminCandidatesController {
@@ -16,6 +17,11 @@ export class AdminCandidatesController {
   @Get('candidates/:id')
   getCandidateById(@Param('id') id: string) {
     return this.candidatesService.getCandidateById(id);
+  }
+
+  @Post('register')
+  registerCandidate(@Body() dto: RegisterCandidateDto) {
+    return this.candidatesService.registerCandidate(dto);
   }
 
   @Put('candidates/:id/verify')

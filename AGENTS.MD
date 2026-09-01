@@ -74,6 +74,18 @@ Do not place major business logic in controllers.
 
 Do not let services depend directly on hardcoded arrays.
 
+### Candidate Registration & Types Standards
+* Keep candidate domain types, status enums (`CourseStatus`), and graduation discipline lists in dedicated type files (e.g. `src/candidates/types/candidate.types.ts`).
+* The candidate registration endpoint (`POST /api/v1/candidates/register` and `POST /api/v1/admin/membership-applications/register`) accepts:
+  - `firstName` (string)
+  - `lastName` (string)
+  - `email` (string)
+  - `pincode` (string)
+  - `engineeringGraduationCourse` (string)
+  - `courseStatus` (CourseStatus)
+  - `password` (string, optional/hashed)
+* All seed candidates and returned DTOs must conform strictly to these fields.
+
 ## Current Data Strategy
 
 Use realistic hardcoded JSON to unblock frontend development.
