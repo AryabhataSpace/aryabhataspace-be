@@ -20,32 +20,32 @@ export class NavigationService {
   private navigation: NavigationMenu = {
     headerMenu: [
       { label: 'Home', url: '/' },
+      { label: 'Doctrine', url: '/', fragment: 'sec-space-doctrine' },
+      { label: 'Talent Model', url: '/', fragment: 'sec-student-reality' },
+      { label: 'Personal Impact', url: '/', fragment: 'sec-personal-impact' },
+      { label: 'Strategic Imperative', url: '/', fragment: 'sec-strategic-impact' },
+      { label: 'Next Steps', url: '/', fragment: 'sec-next-steps' },
+      { label: 'Your Role', url: '/', fragment: 'sec-role-starts-now' },
       { label: 'Posts & Feed', url: '/posts' },
-      { label: 'Vision', url: '/', fragment: 'sec-vision' },
-      { label: 'Eligibility', url: '/', fragment: 'sec-eligibility' },
-      { label: 'How It Works', url: '/', fragment: 'sec-process' },
-      { label: 'Opportunities', url: '/', fragment: 'sec-projects' }
     ],
     footerPrimary: [
       { label: 'About Us', url: '/about' },
       { label: 'Posts & Feed', url: '/posts' },
-      { label: 'Vision & Mission', url: '/', fragment: 'sec-vision' },
-      { label: 'Eligibility Rules', url: '/', fragment: 'sec-eligibility' },
-      { label: 'How to Participate', url: '/', fragment: 'sec-process' },
+      { label: 'Space Projects', url: '/projects' },
       { label: 'News & Updates', url: '/news' },
-      { label: 'FAQ', url: '/faq' }
+      { label: 'FAQ', url: '/faq' },
     ],
     footerProgrammes: [
-      { label: 'Opportunities', url: '/', fragment: 'sec-projects' },
+      { label: 'Opportunities & Projects', url: '/projects' },
       { label: 'Partner Institutions', url: '/partners' },
-      { label: 'Join Programme', url: '/join' }
+      { label: 'Join Programme', url: '/join' },
     ],
     footerLegal: [
       { label: 'Privacy Policy', url: '/privacy' },
       { label: 'Terms of Service', url: '/terms' },
       { label: 'Contact Us', url: '/contact' },
-      { label: 'Admin Portal', url: '/admin/login' }
-    ]
+      { label: 'Admin Portal', url: '/admin/login' },
+    ],
   };
 
   getNavigation(): NavigationMenu {
