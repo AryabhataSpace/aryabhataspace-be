@@ -19,17 +19,30 @@ import { AuditLogsModule } from './audit-logs/audit-logs.module';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        type: 'postgres',
-        host: config.get<string>('DB_HOST', 'localhost'),
-        port: parseInt(config.get<string>('DB_PORT', '5432'), 10),
-        username: config.get<string>('DB_USERNAME', 'postgres'),
-        password: config.get<string>('DB_PASSWORD', 'postgres'),
-        database: config.get<string>('DB_DATABASE', 'aryabhataspace'),
-        autoLoadEntities: true,
-        synchronize: config.get<string>('DB_SYNCHRONIZE', 'true') === 'true',
-        logging: config.get<string>('DB_LOGGING', 'true') === 'true',
-      }),
+      useFactory: (config: ConfigService) => {
+        const databaseUrl = config.get<string>('DATABASE_URL');
+        const dbSsl = config.get<string>('DB_SSL');
+        const useSsl =
+          dbSsl === 'true' ||
+          (databaseUrl && databaseUrl.includes('sslmode=require'));
+
+        return {
+          type: 'postgres',
+          ...(databaseUrl
+            ? { url: databaseUrl }
+            : {
+                host: config.get<string>('DB_HOST', 'localhost'),
+                port: parseInt(config.get<string>('DB_PORT', '5432'), 10),
+                username: config.get<string>('DB_USERNAME', 'postgres'),
+                password: config.get<string>('DB_PASSWORD', 'postgres'),
+                database: config.get<string>('DB_DATABASE', 'aryabhataspace'),
+              }),
+          ssl: useSsl ? { rejectUnauthorized: false } : false,
+          autoLoadEntities: true,
+          synchronize: config.get<string>('DB_SYNCHRONIZE', 'true') === 'true',
+          logging: config.get<string>('DB_LOGGING', 'true') === 'true',
+        };
+      },
     }),
     DocumentsModule,
     PostsModule,
