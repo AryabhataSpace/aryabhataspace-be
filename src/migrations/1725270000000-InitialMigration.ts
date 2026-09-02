@@ -4,7 +4,11 @@ export class InitialMigration1725270000000 implements MigrationInterface {
   name = 'InitialMigration1725270000000';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // 1. Create candidates table
+    // Drop existing legacy/stale development tables if present to ensure clean baseline
+    await queryRunner.dropTable('project_applications', true, true, true);
+    await queryRunner.dropTable('candidates', true, true, true);
+
+    // 1. Create candidates table with canonical schema
     await queryRunner.createTable(
       new Table({
         name: 'candidates',
