@@ -9,10 +9,12 @@ import { ProjectsModule } from './projects/projects.module';
 import { NavigationModule } from './navigation/navigation.module';
 import { CandidatesModule } from './candidates/candidates.module';
 import { AuthModule } from './auth/auth.module';
+import { MailModule } from './mail/mail.module';
 import { AuditLogsModule } from './audit-logs/audit-logs.module';
 import { CandidateEntity } from './candidates/entities/candidate.entity';
 import { ProjectApplicationEntity } from './candidates/entities/project-application.entity';
 import { InitialMigration1725270000000 } from './migrations/1725270000000-InitialMigration';
+import { AddEmailVerificationAndTokens1725280000000 } from './migrations/1725280000000-AddEmailVerificationAndTokens';
 
 @Module({
   imports: [
@@ -38,7 +40,10 @@ import { InitialMigration1725270000000 } from './migrations/1725270000000-Initia
           url: databaseUrl,
           ssl: useSsl ? { rejectUnauthorized: false } : false,
           entities: [CandidateEntity, ProjectApplicationEntity],
-          migrations: [InitialMigration1725270000000],
+          migrations: [
+            InitialMigration1725270000000,
+            AddEmailVerificationAndTokens1725280000000,
+          ],
           // Explicitly set synchronize to false to ensure all schema updates go through migrations
           synchronize: false,
           // Run pending migrations automatically when connecting to database
@@ -48,6 +53,7 @@ import { InitialMigration1725270000000 } from './migrations/1725270000000-Initia
       },
     }),
     AuthModule,
+    MailModule,
     CandidatesModule,
     DocumentsModule,
     PostsModule,

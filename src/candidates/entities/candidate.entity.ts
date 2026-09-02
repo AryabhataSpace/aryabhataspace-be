@@ -77,6 +77,23 @@ export class CandidateEntity {
   @Column({ default: false })
   verified: boolean;
 
+  @Column({ name: 'email_verified_at', type: 'timestamp with time zone', nullable: true })
+  emailVerifiedAt?: Date;
+
+  @Index('IDX_candidates_email_verification_token')
+  @Column({ name: 'email_verification_token', nullable: true })
+  emailVerificationToken?: string;
+
+  @Column({ name: 'email_verification_expires_at', type: 'timestamp with time zone', nullable: true })
+  emailVerificationExpiresAt?: Date;
+
+  @Index('IDX_candidates_password_reset_token')
+  @Column({ name: 'password_reset_token', nullable: true })
+  passwordResetToken?: string;
+
+  @Column({ name: 'password_reset_expires_at', type: 'timestamp with time zone', nullable: true })
+  passwordResetExpiresAt?: Date;
+
   @Column({ name: 'password_hash', select: false, nullable: true })
   passwordHash?: string;
 
@@ -128,6 +145,11 @@ export class CandidateEntity {
     entity.location = model.location;
     entity.profileCompletionPercentage = model.profileCompletionPercentage;
     entity.verified = model.verified;
+    entity.emailVerifiedAt = model.emailVerifiedAt;
+    entity.emailVerificationToken = model.emailVerificationToken;
+    entity.emailVerificationExpiresAt = model.emailVerificationExpiresAt;
+    entity.passwordResetToken = model.passwordResetToken;
+    entity.passwordResetExpiresAt = model.passwordResetExpiresAt;
     entity.passwordHash = model.passwordHash;
     entity.role = model.role;
     entity.status = model.status;

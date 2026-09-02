@@ -46,6 +46,11 @@ export interface CandidateProps {
   location?: string;
   profileCompletionPercentage?: number;
   verified?: boolean;
+  emailVerifiedAt?: Date;
+  emailVerificationToken?: string;
+  emailVerificationExpiresAt?: Date;
+  passwordResetToken?: string;
+  passwordResetExpiresAt?: Date;
   role?: CandidateRole;
   status?: CandidateStatus;
   documents?: CandidateDocument[];
@@ -78,6 +83,11 @@ export class Candidate {
   readonly location: string;
   readonly profileCompletionPercentage: number;
   readonly verified: boolean;
+  readonly emailVerifiedAt?: Date;
+  readonly emailVerificationToken?: string;
+  readonly emailVerificationExpiresAt?: Date;
+  readonly passwordResetToken?: string;
+  readonly passwordResetExpiresAt?: Date;
   readonly role: CandidateRole;
   readonly status: CandidateStatus;
   readonly documents: CandidateDocument[];
@@ -107,10 +117,15 @@ export class Candidate {
     this.linkedinUrl = props.linkedinUrl;
     this.portfolioUrl = props.portfolioUrl;
     this.location = props.location || (props.pincode ? `India (PIN: ${props.pincode})` : 'India');
-    this.profileCompletionPercentage = props.profileCompletionPercentage ?? 75;
+    this.profileCompletionPercentage = props.profileCompletionPercentage ?? 70;
     this.verified = props.verified ?? false;
+    this.emailVerifiedAt = props.emailVerifiedAt;
+    this.emailVerificationToken = props.emailVerificationToken;
+    this.emailVerificationExpiresAt = props.emailVerificationExpiresAt;
+    this.passwordResetToken = props.passwordResetToken;
+    this.passwordResetExpiresAt = props.passwordResetExpiresAt;
     this.role = props.role || 'candidate';
-    this.status = props.status || 'active';
+    this.status = props.status || 'pending';
     this.documents = props.documents ? [...props.documents] : [];
     this.experience = props.experience ? [...props.experience] : [];
     this.education = props.education ? [...props.education] : [];
@@ -119,7 +134,12 @@ export class Candidate {
     this.updatedAt = props.updatedAt || new Date();
   }
 
-  static createFromRegistration(dto: RegisterCandidateDto, passwordHash: string): Candidate {
+  static createFromRegistration(
+    dto: RegisterCandidateDto,
+    passwordHash: string,
+    emailVerificationToken?: string,
+    emailVerificationExpiresAt?: Date,
+  ): Candidate {
     const id = `cand-${Date.now()}`;
     const fullName = `${dto.firstName} ${dto.lastName}`.trim();
     return new Candidate({
@@ -136,8 +156,10 @@ export class Candidate {
       skills: [dto.engineeringGraduationCourse, 'Space Systems Engineering'],
       profileCompletionPercentage: 75,
       verified: false,
+      emailVerificationToken,
+      emailVerificationExpiresAt,
       role: 'candidate',
-      status: 'active',
+      status: 'pending',
       passwordHash,
       documents: [],
       experience: [],
@@ -168,6 +190,11 @@ export class Candidate {
       location: entity.location,
       profileCompletionPercentage: entity.profileCompletionPercentage,
       verified: entity.verified,
+      emailVerifiedAt: entity.emailVerifiedAt,
+      emailVerificationToken: entity.emailVerificationToken,
+      emailVerificationExpiresAt: entity.emailVerificationExpiresAt,
+      passwordResetToken: entity.passwordResetToken,
+      passwordResetExpiresAt: entity.passwordResetExpiresAt,
       role: (entity.role || 'candidate') as CandidateRole,
       status: (entity.status || 'active') as CandidateStatus,
       documents: entity.documents,
@@ -202,6 +229,11 @@ export class Candidate {
       location: existing.location,
       profileCompletionPercentage: existing.profileCompletionPercentage,
       verified: existing.verified,
+      emailVerifiedAt: existing.emailVerifiedAt,
+      emailVerificationToken: existing.emailVerificationToken,
+      emailVerificationExpiresAt: existing.emailVerificationExpiresAt,
+      passwordResetToken: existing.passwordResetToken,
+      passwordResetExpiresAt: existing.passwordResetExpiresAt,
       role: existing.role,
       status: existing.status,
       documents: existing.documents,
@@ -214,7 +246,10 @@ export class Candidate {
     });
   }
 
-  toSanitizedJson(): Omit<CandidateProps, 'passwordHash'> {
+  toSanitizedJson(): Omit<
+    CandidateProps,
+    'passwordHash' | 'emailVerificationToken' | 'passwordResetToken'
+  > {
     return {
       id: this.id,
       firstName: this.firstName,
@@ -237,6 +272,7 @@ export class Candidate {
       location: this.location,
       profileCompletionPercentage: this.profileCompletionPercentage,
       verified: this.verified,
+      emailVerifiedAt: this.emailVerifiedAt,
       role: this.role,
       status: this.status,
       documents: this.documents,

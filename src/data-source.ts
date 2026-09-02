@@ -2,6 +2,7 @@ import { DataSource } from 'typeorm';
 import { CandidateEntity } from './candidates/entities/candidate.entity';
 import { ProjectApplicationEntity } from './candidates/entities/project-application.entity';
 import { InitialMigration1725270000000 } from './migrations/1725270000000-InitialMigration';
+import { AddEmailVerificationAndTokens1725280000000 } from './migrations/1725280000000-AddEmailVerificationAndTokens';
 
 // Load .env if present
 try {
@@ -25,6 +26,9 @@ export const AppDataSource = new DataSource({
   synchronize: false,
   logging: process.env.DB_LOGGING === 'true',
   entities: [CandidateEntity, ProjectApplicationEntity],
-  migrations: [InitialMigration1725270000000],
+  migrations: [
+    InitialMigration1725270000000,
+    AddEmailVerificationAndTokens1725280000000,
+  ],
   migrationsRun: false,
 });

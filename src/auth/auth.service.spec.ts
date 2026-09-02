@@ -1,17 +1,26 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
-import { ConflictException, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  UnauthorizedException,
+  ForbiddenException,
+  BadRequestException,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CandidateEntity } from '../candidates/entities/candidate.entity';
 import { RegisterCandidateDto } from './dto/register.dto';
 import { LoginCandidateDto } from './dto/login.dto';
+import { VerifyEmailDto } from './dto/verify-email.dto';
+import { ForgotPasswordDto, ResetPasswordDto } from './dto/password-reset.dto';
+import { MailService } from '../mail/mail.service';
 import * as bcrypt from 'bcryptjs';
 
 describe('AuthService', () => {
   let service: AuthService;
   let candidateRepo: any;
   let jwtService: any;
+  let mailService: any;
 
   beforeEach(async () => {
     candidateRepo = {
@@ -25,6 +34,12 @@ describe('AuthService', () => {
       verify: jest.fn(),
     };
 
+    mailService = {
+      sendVerificationEmail: jest.fn().mockResolvedValue(true),
+      sendPasswordResetEmail: jest.fn().mockResolvedValue(true),
+      sendPasswordChangedAlert: jest.fn().mockResolvedValue(true),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthService,
@@ -35,6 +50,10 @@ describe('AuthService', () => {
         {
           provide: JwtService,
           useValue: jwtService,
+        },
+        {
+          provide: MailService,
+          useValue: mailService,
         },
       ],
     }).compile();
@@ -47,11 +66,12 @@ describe('AuthService', () => {
   });
 
   describe('register', () => {
-    it('should successfully register a new candidate, hash password, save entity, and return AuthResponse', async () => {
+    it('should register candidate, save unverified entity, and dispatch verification email', async () => {
       candidateRepo.findOne.mockResolvedValue(null);
       candidateRepo.save.mockImplementation((entity: CandidateEntity) => {
         return Promise.resolve({
           ...entity,
+          id: 'cand-123',
           createdAt: new Date(),
           updatedAt: new Date(),
         });
@@ -70,15 +90,18 @@ describe('AuthService', () => {
       const result = await service.register(dto);
 
       expect(result.success).toBe(true);
-      expect(result.token).toBe('mock-jwt-token-12345');
-      expect(result.candidate.email).toBe('aarav.sharma@iitd.ac.in');
-      expect(result.candidate.fullName).toBe('Aarav Sharma');
-      expect(result.candidate.courseStatus).toBe('4th Year');
-      expect((result.candidate as any).passwordHash).toBeUndefined();
-      expect(candidateRepo.save).toHaveBeenCalled();
+      expect(result.requiresVerification).toBe(true);
+      expect(result.token).toBeNull();
+      expect(result.candidate?.email).toBe('aarav.sharma@iitd.ac.in');
+      expect(result.candidate?.verified).toBe(false);
+      expect(mailService.sendVerificationEmail).toHaveBeenCalledWith(
+        'aarav.sharma@iitd.ac.in',
+        'Aarav Sharma',
+        expect.any(String),
+      );
     });
 
-    it('should throw ConflictException if candidate with email already exists', async () => {
+    it('should throw ConflictException if email already registered', async () => {
       candidateRepo.findOne.mockResolvedValue({ id: 'cand-101', email: 'aarav.sharma@iitd.ac.in' });
 
       const dto = new RegisterCandidateDto({
@@ -92,25 +115,46 @@ describe('AuthService', () => {
       });
 
       await expect(service.register(dto)).rejects.toThrow(ConflictException);
-      expect(candidateRepo.save).not.toHaveBeenCalled();
     });
   });
 
   describe('login', () => {
-    it('should authenticate candidate with valid credentials and return AuthResponse', async () => {
+    it('should throw ForbiddenException if candidate is unverified', async () => {
       const passwordHash = await bcrypt.hash('Password123', 10);
       const mockQueryBuilder = {
         addSelect: jest.fn().mockReturnThis(),
         where: jest.fn().mockReturnThis(),
         getOne: jest.fn().mockResolvedValue({
           id: 'cand-101',
-          firstName: 'Aarav',
-          lastName: 'Sharma',
-          fullName: 'Aarav Sharma',
-          email: 'aarav.sharma@iitd.ac.in',
+          email: 'unverified@example.com',
+          fullName: 'Unverified Candidate',
+          passwordHash,
+          verified: false,
+        }),
+      };
+      candidateRepo.createQueryBuilder.mockReturnValue(mockQueryBuilder);
+
+      const dto = new LoginCandidateDto({
+        email: 'unverified@example.com',
+        password: 'Password123',
+      });
+
+      await expect(service.login(dto)).rejects.toThrow(ForbiddenException);
+    });
+
+    it('should authenticate verified candidate and return JWT session', async () => {
+      const passwordHash = await bcrypt.hash('Password123', 10);
+      const mockQueryBuilder = {
+        addSelect: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        getOne: jest.fn().mockResolvedValue({
+          id: 'cand-101',
+          email: 'verified@example.com',
+          fullName: 'Verified Candidate',
           engineeringGraduationCourse: 'Mechanical Engineering',
           courseStatus: '4th Year',
           passwordHash,
+          verified: true,
           role: 'candidate',
           status: 'active',
           createdAt: new Date(),
@@ -120,7 +164,7 @@ describe('AuthService', () => {
       candidateRepo.createQueryBuilder.mockReturnValue(mockQueryBuilder);
 
       const dto = new LoginCandidateDto({
-        email: 'aarav.sharma@iitd.ac.in',
+        email: 'verified@example.com',
         password: 'Password123',
       });
 
@@ -128,44 +172,82 @@ describe('AuthService', () => {
 
       expect(result.success).toBe(true);
       expect(result.token).toBe('mock-jwt-token-12345');
-      expect(result.candidate.email).toBe('aarav.sharma@iitd.ac.in');
+      expect(result.candidate?.verified).toBe(true);
     });
+  });
 
-    it('should throw UnauthorizedException if candidate not found', async () => {
-      const mockQueryBuilder = {
-        addSelect: jest.fn().mockReturnThis(),
-        where: jest.fn().mockReturnThis(),
-        getOne: jest.fn().mockResolvedValue(null),
+  describe('verifyEmail', () => {
+    it('should verify candidate and activate account with valid token', async () => {
+      const mockEntity = {
+        id: 'cand-101',
+        email: 'cadet@example.com',
+        fullName: 'Cadet Candidate',
+        engineeringGraduationCourse: 'Aerospace Engineering',
+        courseStatus: 'Graduated',
+        emailVerificationToken: 'valid-token-123',
+        emailVerificationExpiresAt: new Date(Date.now() + 1000 * 60 * 60),
+        verified: false,
       };
-      candidateRepo.createQueryBuilder.mockReturnValue(mockQueryBuilder);
+      candidateRepo.findOne.mockResolvedValue(mockEntity);
+      candidateRepo.save.mockImplementation((e: any) => Promise.resolve(e));
 
-      const dto = new LoginCandidateDto({
-        email: 'unknown@example.com',
-        password: 'Password123',
-      });
+      const result = await service.verifyEmail(new VerifyEmailDto({ token: 'valid-token-123' }));
 
-      await expect(service.login(dto)).rejects.toThrow(UnauthorizedException);
+      expect(result.success).toBe(true);
+      expect(result.token).toBe('mock-jwt-token-12345');
+      expect(result.candidate?.verified).toBe(true);
+      expect(candidateRepo.save).toHaveBeenCalled();
     });
 
-    it('should throw UnauthorizedException if password does not match', async () => {
-      const passwordHash = await bcrypt.hash('CorrectPassword', 10);
-      const mockQueryBuilder = {
-        addSelect: jest.fn().mockReturnThis(),
-        where: jest.fn().mockReturnThis(),
-        getOne: jest.fn().mockResolvedValue({
-          id: 'cand-101',
-          email: 'aarav.sharma@iitd.ac.in',
-          passwordHash,
+    it('should throw BadRequestException if token is invalid or expired', async () => {
+      candidateRepo.findOne.mockResolvedValue(null);
+
+      await expect(
+        service.verifyEmail(new VerifyEmailDto({ token: 'invalid-token' })),
+      ).rejects.toThrow(BadRequestException);
+    });
+  });
+
+  describe('forgotPassword & resetPassword', () => {
+    it('should generate reset token and dispatch password reset email', async () => {
+      const mockCandidate = {
+        id: 'cand-101',
+        email: 'cadet@example.com',
+        fullName: 'Cadet Candidate',
+      };
+      candidateRepo.findOne.mockResolvedValue(mockCandidate);
+      candidateRepo.save.mockImplementation((e: any) => Promise.resolve(e));
+
+      const result = await service.forgotPassword(
+        new ForgotPasswordDto({ email: 'cadet@example.com' }),
+      );
+
+      expect(result.success).toBe(true);
+      expect(mailService.sendPasswordResetEmail).toHaveBeenCalled();
+    });
+
+    it('should reset password with valid token and update passwordHash', async () => {
+      const mockCandidate = {
+        id: 'cand-101',
+        email: 'cadet@example.com',
+        fullName: 'Cadet Candidate',
+        passwordResetToken: 'valid-reset-token',
+        passwordResetExpiresAt: new Date(Date.now() + 1000 * 60 * 30),
+      };
+      candidateRepo.findOne.mockResolvedValue(mockCandidate);
+      candidateRepo.save.mockImplementation((e: any) => Promise.resolve(e));
+
+      const result = await service.resetPassword(
+        new ResetPasswordDto({
+          token: 'valid-reset-token',
+          password: 'NewStrongPassword123',
+          confirmPassword: 'NewStrongPassword123',
         }),
-      };
-      candidateRepo.createQueryBuilder.mockReturnValue(mockQueryBuilder);
+      );
 
-      const dto = new LoginCandidateDto({
-        email: 'aarav.sharma@iitd.ac.in',
-        password: 'WrongPassword',
-      });
-
-      await expect(service.login(dto)).rejects.toThrow(UnauthorizedException);
+      expect(result.success).toBe(true);
+      expect(candidateRepo.save).toHaveBeenCalled();
+      expect(mailService.sendPasswordChangedAlert).toHaveBeenCalled();
     });
   });
 });

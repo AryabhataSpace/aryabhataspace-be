@@ -122,6 +122,14 @@ export default {
   },
   {
     "renderMode": 1,
+    "route": "/verify-email"
+  },
+  {
+    "renderMode": 1,
+    "route": "/reset-password"
+  },
+  {
+    "renderMode": 1,
     "route": "/dashboard"
   },
   {
@@ -164,11 +172,11 @@ export default {
 ],
   entryPointToBrowserMapping: undefined,
   assets: {
-    'index.csr.html': {size: 78116, hash: '56f2dc4ad49518390176a456d42db4d03c48893a9dc51a5fd564ca23c73aa0b1', text: () => import('./assets-chunks/index_csr_html.mjs').then(m => m.default)},
-    'index.server.html': {size: 22210, hash: '430adeeb63b3a499a6179ca95fb7e5397435e7a8670488503be14236f5947ea5', text: () => import('./assets-chunks/index_server_html.mjs').then(m => m.default)},
-    'privacy/index.html': {size: 113031, hash: 'cbbb9b9b6704c50cfb13874ac1f51ac0e195ca78559e74ff80fa05df0ac0ed93', text: () => import('./assets-chunks/privacy_index_html.mjs').then(m => m.default)},
-    'about/index.html': {size: 113275, hash: '947fd951a428dcbdf7302d64f61a763b04bde1575de3e9030727ecb17fe46682', text: () => import('./assets-chunks/about_index_html.mjs').then(m => m.default)},
-    'terms/index.html': {size: 113013, hash: 'b66916e823b6cb0725be3a1dbcadbb2c0bc44e2a125e6144da0d280a2622770a', text: () => import('./assets-chunks/terms_index_html.mjs').then(m => m.default)},
-    'styles-7MK666LI.css': {size: 166301, hash: 'shPn8Y+/M8c', text: () => import('./assets-chunks/styles-7MK666LI_css.mjs').then(m => m.default)}
+    'index.csr.html': {size: 78116, hash: '9f0faf43301437354c88cb98d23f7a0eb52e7f33261bd3895827d83da5d65d6d', text: () => import('./assets-chunks/index_csr_html.mjs').then(m => m.default)},
+    'index.server.html': {size: 22210, hash: '6bd5bf013d7ef05c6c2108ce4914010e68ac8a5da85e89af9de45a8da356c1a4', text: () => import('./assets-chunks/index_server_html.mjs').then(m => m.default)},
+    'about/index.html': {size: 113275, hash: '30c716845edd54baa54a699c06c7aafbc4343019ebfc90cfe32c31580a9087dc', text: () => import('./assets-chunks/about_index_html.mjs').then(m => m.default)},
+    'privacy/index.html': {size: 113031, hash: 'a1ed0f52230ffc04d2ea4753cd100053741e1aa3c9e5036af782b869954989f3', text: () => import('./assets-chunks/privacy_index_html.mjs').then(m => m.default)},
+    'terms/index.html': {size: 113013, hash: '4c8eed72669f83745e36e0ce0319da0b10e73b840937d386d6725b0780ac44fb', text: () => import('./assets-chunks/terms_index_html.mjs').then(m => m.default)},
+    'styles-AVX7Y43D.css': {size: 169003, hash: 'ypFk/9PfM0I', text: () => import('./assets-chunks/styles-AVX7Y43D_css.mjs').then(m => m.default)}
   },
 };
