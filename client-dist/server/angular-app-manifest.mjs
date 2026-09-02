@@ -172,11 +172,11 @@ export default {
 ],
   entryPointToBrowserMapping: undefined,
   assets: {
-    'index.csr.html': {size: 78116, hash: '9f0faf43301437354c88cb98d23f7a0eb52e7f33261bd3895827d83da5d65d6d', text: () => import('./assets-chunks/index_csr_html.mjs').then(m => m.default)},
-    'index.server.html': {size: 22210, hash: '6bd5bf013d7ef05c6c2108ce4914010e68ac8a5da85e89af9de45a8da356c1a4', text: () => import('./assets-chunks/index_server_html.mjs').then(m => m.default)},
-    'about/index.html': {size: 113275, hash: '30c716845edd54baa54a699c06c7aafbc4343019ebfc90cfe32c31580a9087dc', text: () => import('./assets-chunks/about_index_html.mjs').then(m => m.default)},
-    'privacy/index.html': {size: 113031, hash: 'a1ed0f52230ffc04d2ea4753cd100053741e1aa3c9e5036af782b869954989f3', text: () => import('./assets-chunks/privacy_index_html.mjs').then(m => m.default)},
-    'terms/index.html': {size: 113013, hash: '4c8eed72669f83745e36e0ce0319da0b10e73b840937d386d6725b0780ac44fb', text: () => import('./assets-chunks/terms_index_html.mjs').then(m => m.default)},
-    'styles-AVX7Y43D.css': {size: 169003, hash: 'ypFk/9PfM0I', text: () => import('./assets-chunks/styles-AVX7Y43D_css.mjs').then(m => m.default)}
+    'index.csr.html': {size: 78116, hash: '360070944248e4c2eca6ab7b6a03668ca068ed4f681bd8ae0ceb6299e5705e47', text: () => import('./assets-chunks/index_csr_html.mjs').then(m => m.default)},
+    'index.server.html': {size: 22210, hash: '93fa9862af25a412cf874df27e0aa6462bfd983a3c8f5f2e09143a6b65145931', text: () => import('./assets-chunks/index_server_html.mjs').then(m => m.default)},
+    'about/index.html': {size: 113275, hash: '4376c1d9972f7388cd0bfffcfb7fd29d4b266fedd5781237d6fd27b84c4b8997', text: () => import('./assets-chunks/about_index_html.mjs').then(m => m.default)},
+    'privacy/index.html': {size: 113031, hash: '8d8b7a9666802384941f3871cc36cc4ad5c93bacdfd2a4b9efab2f6cf1c2c33e', text: () => import('./assets-chunks/privacy_index_html.mjs').then(m => m.default)},
+    'terms/index.html': {size: 113013, hash: 'ddf3c82500c895def2b9d15881c302753c8df142640eb071d539bac3fc6b0fa2', text: () => import('./assets-chunks/terms_index_html.mjs').then(m => m.default)},
+    'styles-QJT5WNYB.css': {size: 171489, hash: 'H1MoFcGRd7M', text: () => import('./assets-chunks/styles-QJT5WNYB_css.mjs').then(m => m.default)}
   },
 };

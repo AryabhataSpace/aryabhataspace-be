@@ -41,6 +41,8 @@ export class MailService {
     const verificationUrl = `${this.appUrl}/verify-email?token=${encodeURIComponent(token)}`;
     const subject = 'Verify Your Aryabhata Space Candidate Account';
 
+    const logoUrl = `${this.appUrl}/aryabhataspace.png`;
+
     const htmlContent = `
 <!DOCTYPE html>
 <html>
@@ -50,6 +52,7 @@ export class MailService {
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #030712; color: #f3f4f6; margin: 0; padding: 0; }
     .container { max-width: 600px; margin: 40px auto; background: #0b0f19; border: 1px solid #1f293d; border-radius: 12px; overflow: hidden; }
     .header { background: linear-gradient(135deg, #0b1528 0%, #1e1b4b 100%); padding: 32px 24px; text-align: center; border-bottom: 1px solid #1f293d; }
+    .logo-img { display: block; margin: 0 auto 12px auto; width: 64px; height: 64px; object-fit: contain; }
     .logo { font-size: 24px; font-weight: 800; letter-spacing: 0.05em; color: #38bdf8; text-transform: uppercase; margin: 0; }
     .subtitle { color: #94a3b8; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 6px; }
     .content { padding: 36px 32px; line-height: 1.6; color: #e2e8f0; }
@@ -64,6 +67,7 @@ export class MailService {
 <body>
   <div class="container">
     <div class="header">
+      <img src="${logoUrl}" alt="Aryabhata Space" class="logo-img" />
       <div class="badge">National Space Talent Platform</div>
       <h1 class="logo">Aryabhata Space</h1>
       <div class="subtitle">Cadet Engineering Registry</div>
@@ -93,6 +97,7 @@ export class MailService {
 
   async sendPasswordResetEmail(toEmail: string, candidateName: string, token: string): Promise<boolean> {
     const resetUrl = `${this.appUrl}/reset-password?token=${encodeURIComponent(token)}`;
+    const logoUrl = `${this.appUrl}/aryabhataspace.png`;
     const subject = 'Reset Your Aryabhata Space Password';
 
     const htmlContent = `
@@ -104,6 +109,7 @@ export class MailService {
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #030712; color: #f3f4f6; margin: 0; padding: 0; }
     .container { max-width: 600px; margin: 40px auto; background: #0b0f19; border: 1px solid #1f293d; border-radius: 12px; overflow: hidden; }
     .header { background: linear-gradient(135deg, #0b1528 0%, #1e1b4b 100%); padding: 32px 24px; text-align: center; border-bottom: 1px solid #1f293d; }
+    .logo-img { display: block; margin: 0 auto 12px auto; width: 64px; height: 64px; object-fit: contain; }
     .logo { font-size: 24px; font-weight: 800; letter-spacing: 0.05em; color: #f59e0b; text-transform: uppercase; margin: 0; }
     .subtitle { color: #94a3b8; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 6px; }
     .content { padding: 36px 32px; line-height: 1.6; color: #e2e8f0; }
@@ -118,6 +124,7 @@ export class MailService {
 <body>
   <div class="container">
     <div class="header">
+      <img src="${logoUrl}" alt="Aryabhata Space" class="logo-img" />
       <h1 class="logo">Aryabhata Space</h1>
       <div class="subtitle">Security Operations — Password Reset</div>
     </div>
