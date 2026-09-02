@@ -74,17 +74,26 @@ Do not place major business logic in controllers.
 
 Do not let services depend directly on hardcoded arrays.
 
-### Candidate Registration & Types Standards
-* Keep candidate domain types, status enums (`CourseStatus`), and graduation discipline lists in dedicated type files (e.g. `src/candidates/types/candidate.types.ts`).
-* The candidate registration endpoint (`POST /api/v1/candidates/register` and `POST /api/v1/admin/membership-applications/register`) accepts:
-  - `firstName` (string)
-  - `lastName` (string)
-  - `email` (string)
-  - `pincode` (string)
-  - `engineeringGraduationCourse` (string)
-  - `courseStatus` (CourseStatus)
-  - `password` (string, optional/hashed)
-* All seed candidates and returned DTOs must conform strictly to these fields.
+### Data Models, Types, and Class-Based Mapping Rules
+* **Dedicated Data Models in Own Files & Folders:**
+  - **Never** declare data models, interfaces, or classes directly inside controller or service files.
+  - Keep entity classes in `entities/` (e.g. `src/candidates/entities/candidate.entity.ts`), DTOs in `dto/`, and domain models in `models/`.
+* **Centralized Types & Constants in `utils/`:**
+  - **Never** hardcode ad-hoc type aliases, string literal unions (`'3rd Year' | '4th Year'`), or constant arrays in services or controllers.
+  - Keep candidate domain types, status enums (`CourseStatus`), and graduation discipline lists in dedicated type files under `utils/` or `types/` (e.g. `src/candidates/utils/candidate.types.ts`).
+* **Class-Based Object Mapping & Instantiation:**
+  - When transforming data between DTOs, entities, and response models, **never** construct plain ad-hoc object literals (e.g. `let a = { id: 1, name: 'max' }`).
+  - Always use formal class instantiation or static factory methods (e.g. `new Candidate(data)`, `CandidateEntity.fromDto(dto)`, or `Candidate.copy(obj)`).
+* **Candidate Registration Endpoint Contract:**
+  - The candidate registration endpoint (`POST /api/v1/auth/register`, `POST /api/v1/candidates/register`, and `POST /api/v1/admin/membership-applications/register`) accepts:
+    - `firstName` (string)
+    - `lastName` (string)
+    - `email` (string)
+    - `pincode` (string)
+    - `engineeringGraduationCourse` (string)
+    - `courseStatus` (CourseStatus)
+    - `password` (string, hashed before persistence)
+  - All seed candidates, entities, and returned DTOs must conform strictly to these fields.
 
 ## Current Data Strategy
 
@@ -593,3 +602,4 @@ A backend task is complete when:
 * Errors use appropriate status codes.
 * Tests or verification have been completed.
 * The implementation remains migratable from JSON to PostgreSQL.
+* The completed feature is committed to local git with a descriptive message (do not push to remote until explicitly instructed).

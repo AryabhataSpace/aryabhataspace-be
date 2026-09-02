@@ -8,7 +8,11 @@ import { PostsModule } from './posts/posts.module';
 import { ProjectsModule } from './projects/projects.module';
 import { NavigationModule } from './navigation/navigation.module';
 import { CandidatesModule } from './candidates/candidates.module';
+import { AuthModule } from './auth/auth.module';
 import { AuditLogsModule } from './audit-logs/audit-logs.module';
+import { CandidateEntity } from './candidates/entities/candidate.entity';
+import { ProjectApplicationEntity } from './candidates/entities/project-application.entity';
+import { InitialMigration1725270000000 } from './migrations/1725270000000-InitialMigration';
 
 @Module({
   imports: [
@@ -33,17 +37,22 @@ import { AuditLogsModule } from './audit-logs/audit-logs.module';
           type: 'postgres',
           url: databaseUrl,
           ssl: useSsl ? { rejectUnauthorized: false } : false,
-          autoLoadEntities: true,
-          synchronize: config.get<string>('DB_SYNCHRONIZE', 'true') === 'true',
-          logging: config.get<string>('DB_LOGGING', 'true') === 'true',
+          entities: [CandidateEntity, ProjectApplicationEntity],
+          migrations: [InitialMigration1725270000000],
+          // Explicitly set synchronize to false to ensure all schema updates go through migrations
+          synchronize: false,
+          // Run pending migrations automatically when connecting to database
+          migrationsRun: config.get<string>('DB_MIGRATIONS_RUN', 'true') === 'true',
+          logging: config.get<string>('DB_LOGGING', 'false') === 'true',
         };
       },
     }),
+    AuthModule,
+    CandidatesModule,
     DocumentsModule,
     PostsModule,
     ProjectsModule,
     NavigationModule,
-    CandidatesModule,
     AuditLogsModule,
   ],
   controllers: [AppController],

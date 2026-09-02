@@ -164,11 +164,11 @@ export default {
 ],
   entryPointToBrowserMapping: undefined,
   assets: {
-    'index.csr.html': {size: 78116, hash: 'cf741aa1cbff64ec3c5d7a9e69559bee199a03604c1f3019a81dee6edb3e448e', text: () => import('./assets-chunks/index_csr_html.mjs').then(m => m.default)},
-    'index.server.html': {size: 22210, hash: '192b10d5edc6f1b486f5453cb9b29f010fccbc660ad4aa4d58d3792a39eebf5e', text: () => import('./assets-chunks/index_server_html.mjs').then(m => m.default)},
-    'privacy/index.html': {size: 113028, hash: 'db4653835f7847f60e1156cd51943b528a38494753445620a8f48ddfcecd4f69', text: () => import('./assets-chunks/privacy_index_html.mjs').then(m => m.default)},
-    'terms/index.html': {size: 113010, hash: '6bb53c411721be8a738896decd13f29be286f49e1498276ae0db880004a55315', text: () => import('./assets-chunks/terms_index_html.mjs').then(m => m.default)},
-    'about/index.html': {size: 113273, hash: '3b9ee8c4fc7cadc1d340a9d1dbe56c3b721ba4b63c71fe4d80cb8fcd49ae442d', text: () => import('./assets-chunks/about_index_html.mjs').then(m => m.default)},
+    'index.csr.html': {size: 78116, hash: '56f2dc4ad49518390176a456d42db4d03c48893a9dc51a5fd564ca23c73aa0b1', text: () => import('./assets-chunks/index_csr_html.mjs').then(m => m.default)},
+    'index.server.html': {size: 22210, hash: '430adeeb63b3a499a6179ca95fb7e5397435e7a8670488503be14236f5947ea5', text: () => import('./assets-chunks/index_server_html.mjs').then(m => m.default)},
+    'privacy/index.html': {size: 113031, hash: 'cbbb9b9b6704c50cfb13874ac1f51ac0e195ca78559e74ff80fa05df0ac0ed93', text: () => import('./assets-chunks/privacy_index_html.mjs').then(m => m.default)},
+    'about/index.html': {size: 113275, hash: '947fd951a428dcbdf7302d64f61a763b04bde1575de3e9030727ecb17fe46682', text: () => import('./assets-chunks/about_index_html.mjs').then(m => m.default)},
+    'terms/index.html': {size: 113013, hash: 'b66916e823b6cb0725be3a1dbcadbb2c0bc44e2a125e6144da0d280a2622770a', text: () => import('./assets-chunks/terms_index_html.mjs').then(m => m.default)},
     'styles-7MK666LI.css': {size: 166301, hash: 'shPn8Y+/M8c', text: () => import('./assets-chunks/styles-7MK666LI_css.mjs').then(m => m.default)}
   },
 };

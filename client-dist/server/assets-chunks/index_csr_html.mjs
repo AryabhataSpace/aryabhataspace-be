@@ -16,6 +16,6 @@ export default `<!doctype html>
 
 <body class="mat-typography" ngcm="">
   <app-root></app-root>
-<link rel="modulepreload" href="chunk-UJDDFZVH.js"><script src="main-CC2RT2X3.js" type="module"></script></body>
+<link rel="modulepreload" href="chunk-XLDUAMER.js"><script src="main-PTUPQGMK.js" type="module"></script></body>
 
 </html>`;

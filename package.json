@@ -18,18 +18,25 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "typeorm": "typeorm-ts-node-commonjs",
+    "migration:run": "typeorm-ts-node-commonjs migration:run -d ./src/data-source.ts",
+    "migration:generate": "typeorm-ts-node-commonjs migration:generate -d ./src/data-source.ts",
+    "migration:revert": "typeorm-ts-node-commonjs migration:revert -d ./src/data-source.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^12.0.0",
     "@nestjs/core": "^11.0.1",
+    "@nestjs/jwt": "^12.0.1",
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/typeorm": "^12.0.1",
+    "bcryptjs": "^3.0.3",
     "pg": "^8.23.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
-    "typeorm": "^1.1.0"
+    "typeorm": "^1.1.0",
+    "zod": "^4.5.4"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
@@ -37,6 +44,7 @@
     "@nestjs/cli": "^11.0.0",
     "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.0.1",
+    "@types/bcryptjs": "^2.4.6",
     "@types/express": "^5.0.0",
     "@types/jest": "^30.0.0",
     "@types/multer": "^2.2.0",
@@ -68,6 +76,13 @@
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
+    "moduleNameMapper": {
+      "^@nestjs/typeorm$": "<rootDir>/../test/mocks/typeorm.mock.ts",
+      "^@nestjs/jwt$": "<rootDir>/../test/mocks/jwt.mock.ts"
+    },
+    "transformIgnorePatterns": [
+      "node_modules/(?!(@nestjs/jwt)/)"
+    ],
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],

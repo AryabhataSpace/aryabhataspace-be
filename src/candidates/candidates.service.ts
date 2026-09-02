@@ -1,56 +1,19 @@
 import { Injectable, NotFoundException, OnModuleInit, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CourseStatus, RegisterCandidateDto } from './types/candidate.types';
 import { CandidateEntity } from './entities/candidate.entity';
 import { ProjectApplicationEntity } from './entities/project-application.entity';
-
-export interface Candidate {
-  id: string;
-  firstName?: string;
-  lastName?: string;
-  fullName: string;
-  email: string;
-  pincode?: string;
-  phone?: string;
-  engineeringGraduationCourse: string;
-  engineeringBranch: string;
-  courseStatus: CourseStatus;
-  institution?: string;
-  graduationYear?: number;
-  degreeLevel?: 'Bachelor' | 'Master' | 'PhD' | 'Diploma';
-  skills: string[];
-  bio?: string;
-  githubUrl?: string;
-  linkedinUrl?: string;
-  portfolioUrl?: string;
-  location: string;
-  profileCompletionPercentage: number;
-  documents?: { id: string; name: string; type: string; uploadedAt: string }[];
-  experience?: { role: string; organization: string; duration: string; description: string }[];
-  education?: { degree: string; fieldOfStudy: string; institution: string; startYear: number; endYear: number }[];
-  verified?: boolean;
-}
-
-export interface ProjectApplication {
-  id: string;
-  projectId: string;
-  projectTitle: string;
-  candidateId: string;
-  candidateName?: string;
-  candidateBranch?: string;
-  status: 'submitted' | 'under-review' | 'shortlisted' | 'accepted' | 'declined';
-  appliedAt: string;
-  coverNote?: string;
-  adminNotes?: string;
-}
+import { Candidate } from './models/candidate.model';
+import { ProjectApplication } from './models/project-application.model';
+import { RegisterCandidateDto } from '../auth/dto/register.dto';
+import { ApplicationStatus } from './utils/candidate.types';
 
 @Injectable()
 export class CandidatesService implements OnModuleInit {
   private readonly logger = new Logger(CandidatesService.name);
 
-  private seedCandidates: Partial<CandidateEntity>[] = [
-    {
+  private readonly seedCandidates: Candidate[] = [
+    new Candidate({
       id: 'cand-101',
       firstName: 'Aarav',
       lastName: 'Sharma',
@@ -72,6 +35,8 @@ export class CandidatesService implements OnModuleInit {
       location: 'New Delhi, India',
       profileCompletionPercentage: 95,
       verified: true,
+      role: 'candidate',
+      status: 'active',
       documents: [
         { id: 'doc-1', name: 'Resume_Aarav_Sharma.pdf', type: 'Resume', uploadedAt: '2026-07-10T10:00:00Z' },
         { id: 'doc-2', name: 'Thermal_Analysis_Report.pdf', type: 'Project Report', uploadedAt: '2026-07-12T14:30:00Z' },
@@ -82,8 +47,8 @@ export class CandidatesService implements OnModuleInit {
       education: [
         { degree: 'B.Tech', fieldOfStudy: 'Mechanical Engineering', institution: 'IIT Delhi', startYear: 2022, endYear: 2026 },
       ],
-    },
-    {
+    }),
+    new Candidate({
       id: 'cand-102',
       firstName: 'Priya',
       lastName: 'Venkatesh',
@@ -104,6 +69,8 @@ export class CandidatesService implements OnModuleInit {
       location: 'Bengaluru, India',
       profileCompletionPercentage: 90,
       verified: true,
+      role: 'candidate',
+      status: 'active',
       documents: [
         { id: 'doc-3', name: 'Priya_V_Avionics_CV.pdf', type: 'Resume', uploadedAt: '2026-07-15T09:15:00Z' },
       ],
@@ -113,8 +80,8 @@ export class CandidatesService implements OnModuleInit {
       education: [
         { degree: 'B.E.', fieldOfStudy: 'Electronics & Communication', institution: 'RV College of Engineering', startYear: 2021, endYear: 2025 },
       ],
-    },
-    {
+    }),
+    new Candidate({
       id: 'cand-103',
       firstName: 'Rohan',
       lastName: 'Gupta',
@@ -135,6 +102,8 @@ export class CandidatesService implements OnModuleInit {
       location: 'Surathkal, Karnataka',
       profileCompletionPercentage: 85,
       verified: false,
+      role: 'candidate',
+      status: 'active',
       documents: [
         { id: 'doc-4', name: 'Rohan_Gupta_Resume.pdf', type: 'Resume', uploadedAt: '2026-07-18T11:20:00Z' },
       ],
@@ -142,11 +111,11 @@ export class CandidatesService implements OnModuleInit {
       education: [
         { degree: 'B.Tech', fieldOfStudy: 'Computer Science', institution: 'NIT Surathkal', startYear: 2022, endYear: 2026 },
       ],
-    },
+    }),
   ];
 
-  private seedApplications: Partial<ProjectApplicationEntity>[] = [
-    {
+  private readonly seedApplications: ProjectApplication[] = [
+    new ProjectApplication({
       id: 'app-501',
       projectId: 'proj-1',
       projectTitle: 'CubeSat Attitude Determination & Control System (ADCS)',
@@ -154,10 +123,11 @@ export class CandidatesService implements OnModuleInit {
       candidateName: 'Priya Venkatesh',
       candidateBranch: 'Electronics & Communication',
       status: 'shortlisted',
+      appliedAt: new Date('2026-07-20T10:00:00Z'),
       coverNote: 'I have hands-on experience programming STM32 microcontrollers and FreeRTOS for satellite telemetry payloads.',
       adminNotes: 'Strong embedded background. Excellent candidate for ADCS firmware task.',
-    },
-    {
+    }),
+    new ProjectApplication({
       id: 'app-502',
       projectId: 'proj-2',
       projectTitle: 'Cryogenic Rocket Nozzle Thermal & Structural Analysis',
@@ -165,9 +135,10 @@ export class CandidatesService implements OnModuleInit {
       candidateName: 'Aarav Sharma',
       candidateBranch: 'Mechanical Engineering',
       status: 'under-review',
+      appliedAt: new Date('2026-07-22T14:00:00Z'),
       coverNote: 'My undergraduate thesis focuses on finite element thermal stress simulation for high-temperature superalloys.',
-    },
-    {
+    }),
+    new ProjectApplication({
       id: 'app-503',
       projectId: 'proj-3',
       projectTitle: 'Lunar Surface Rover Vision & Autonomous Path Planning',
@@ -175,8 +146,9 @@ export class CandidatesService implements OnModuleInit {
       candidateName: 'Rohan Gupta',
       candidateBranch: 'Computer Science & Engineering',
       status: 'submitted',
+      appliedAt: new Date('2026-07-25T09:30:00Z'),
       coverNote: 'Built stereo vision depth mapping algorithms using ROS2 and PyTorch for multi-agent terrestrial robots.',
-    },
+    }),
   ];
 
   constructor(
@@ -192,7 +164,8 @@ export class CandidatesService implements OnModuleInit {
       if (count === 0) {
         this.logger.log('Seeding initial candidates into PostgreSQL database...');
         for (const c of this.seedCandidates) {
-          await this.candidateRepo.save(this.candidateRepo.create(c));
+          const entity = CandidateEntity.fromModel(c);
+          await this.candidateRepo.save(entity);
         }
       }
 
@@ -200,50 +173,35 @@ export class CandidatesService implements OnModuleInit {
       if (appCount === 0) {
         this.logger.log('Seeding initial project applications into PostgreSQL database...');
         for (const a of this.seedApplications) {
-          await this.appRepo.save(this.appRepo.create(a));
+          const entity = ProjectApplicationEntity.fromModel(a);
+          await this.appRepo.save(entity);
         }
       }
-      this.logger.log('PostgreSQL database synchronization and initialization complete.');
+      this.logger.log('Candidate repository initialized.');
     } catch (err: any) {
-      this.logger.warn(`Could not seed database directly on init: ${err.message}`);
+      this.logger.warn(`Could not initialize database seed directly on init: ${err.message}`);
     }
   }
 
-  async registerCandidate(dto: RegisterCandidateDto): Promise<CandidateEntity> {
-    const fullName = `${dto.firstName} ${dto.lastName}`.trim();
-    const newCandidate = this.candidateRepo.create({
-      id: `cand-${Date.now()}`,
-      firstName: dto.firstName,
-      lastName: dto.lastName,
-      fullName: fullName,
-      email: dto.email,
-      pincode: dto.pincode,
-      engineeringGraduationCourse: dto.engineeringGraduationCourse,
-      engineeringBranch: dto.engineeringGraduationCourse,
-      courseStatus: dto.courseStatus,
-      institution: 'Registered Engineering Candidate',
-      location: dto.pincode ? `India (PIN: ${dto.pincode})` : 'India',
-      skills: [dto.engineeringGraduationCourse],
-      profileCompletionPercentage: 70,
-      verified: false,
-      documents: [],
-      experience: [],
-      education: [],
-    });
-
+  async registerCandidate(dto: RegisterCandidateDto): Promise<Candidate> {
+    const candidateModel = Candidate.createFromRegistration(dto, '');
+    const candidateEntity = CandidateEntity.fromModel(candidateModel);
     try {
-      return await this.candidateRepo.save(newCandidate);
+      const saved = await this.candidateRepo.save(candidateEntity);
+      return Candidate.fromEntity(saved);
     } catch (err: any) {
       this.logger.error(`Error saving candidate to database: ${err.message}`);
-      return newCandidate;
+      return candidateModel;
     }
   }
 
-  async getCandidates(branch?: string, search?: string): Promise<CandidateEntity[]> {
+  async getCandidates(branch?: string, search?: string): Promise<Candidate[]> {
     try {
-      let list = await this.candidateRepo.find({
+      const entities = await this.candidateRepo.find({
         order: { createdAt: 'DESC' },
       });
+
+      let list = entities.map((e) => Candidate.fromEntity(e));
 
       if (branch) {
         list = list.filter((c) => c.engineeringBranch === branch || c.engineeringGraduationCourse === branch);
@@ -263,56 +221,59 @@ export class CandidatesService implements OnModuleInit {
       return list;
     } catch (err: any) {
       this.logger.warn(`Database query failed, returning fallback seed data: ${err.message}`);
-      return this.seedCandidates as CandidateEntity[];
+      return this.seedCandidates;
     }
   }
 
-  async getCandidateById(id: string): Promise<CandidateEntity> {
+  async getCandidateById(id: string): Promise<Candidate> {
     try {
       const candidate = await this.candidateRepo.findOne({ where: { id } });
       if (!candidate) throw new NotFoundException(`Candidate '${id}' not found`);
-      return candidate;
+      return Candidate.fromEntity(candidate);
     } catch (err: any) {
       if (err instanceof NotFoundException) throw err;
       const found = this.seedCandidates.find((c) => c.id === id);
       if (!found) throw new NotFoundException(`Candidate '${id}' not found`);
-      return found as CandidateEntity;
+      return found;
     }
   }
 
-  async getApplications(status?: string, projectId?: string): Promise<ProjectApplicationEntity[]> {
+  async getApplications(status?: string, projectId?: string): Promise<ProjectApplication[]> {
     try {
       const where: any = {};
       if (status) where.status = status;
       if (projectId) where.projectId = projectId;
-      return await this.appRepo.find({
+      const entities = await this.appRepo.find({
         where,
         order: { appliedAt: 'DESC' },
       });
+      return entities.map((e) => ProjectApplication.fromEntity(e));
     } catch (err: any) {
       this.logger.warn(`Database query failed for applications: ${err.message}`);
-      return this.seedApplications as ProjectApplicationEntity[];
+      return this.seedApplications;
     }
   }
 
   async updateApplicationStatus(
     id: string,
-    status: 'submitted' | 'under-review' | 'shortlisted' | 'accepted' | 'declined',
+    status: ApplicationStatus,
     adminNotes?: string,
-  ): Promise<ProjectApplicationEntity> {
+  ): Promise<ProjectApplication> {
     const app = await this.appRepo.findOne({ where: { id } });
     if (!app) throw new NotFoundException(`Application '${id}' not found`);
     app.status = status;
     if (adminNotes !== undefined) {
       app.adminNotes = adminNotes;
     }
-    return await this.appRepo.save(app);
+    const saved = await this.appRepo.save(app);
+    return ProjectApplication.fromEntity(saved);
   }
 
-  async verifyCandidate(id: string, verified: boolean): Promise<CandidateEntity> {
+  async verifyCandidate(id: string, verified: boolean): Promise<Candidate> {
     const cand = await this.candidateRepo.findOne({ where: { id } });
     if (!cand) throw new NotFoundException(`Candidate '${id}' not found`);
     cand.verified = verified;
-    return await this.candidateRepo.save(cand);
+    const saved = await this.candidateRepo.save(cand);
+    return Candidate.fromEntity(saved);
   }
 }

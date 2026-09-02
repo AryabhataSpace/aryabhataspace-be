@@ -87,7 +87,7 @@ We invite young mechanical and aerospace researchers to apply for the upcoming p
       content: `Applications are officially open for our 6-month hands-on Precision Machining & Aerospace Fabrication Fellowship!
 
 Who can apply?
-Graduates and final-year students from Mechanical, Metallurgy, Production, Electrical, and Mechatronics engineering disciplines across India.
+Graduates and final-year students from Mechanical, Metallurgy, Production, Electrical, and Mechatronics engineering disciplines across the nation.
 
 Selected candidates will work on multi-axis CNC milling, electron beam welding (EBW), and ultra-clean room assembly for satellite structural frames.
 
