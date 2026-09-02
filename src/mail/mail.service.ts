@@ -15,11 +15,11 @@ export class MailService {
     const pass = this.config.get<string>('GMAIL_APP_PASSWORD');
     this.fromAddress = this.config.get<string>(
       'GMAIL_FROM',
-      '"Aryabhata Space Platform" <no-reply@aryabhataspace.org>',
+      user ? `"Aryabhata Space" <${user}>` : '"Aryabhata Space Platform" <no-reply@aryabhataspace.org>',
     );
     this.appUrl = this.config.get<string>('APP_URL', 'http://localhost:3000').replace(/\/$/, '');
 
-    if (user && pass && user !== 'aryabhataspace.org@gmail.com' && pass !== 'your_16_digit_app_password') {
+    if (user && pass && pass !== 'your_16_digit_app_password') {
       this.transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
